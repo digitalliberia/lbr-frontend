@@ -10,36 +10,15 @@ import SearchIcon from '@mui/icons-material/Search';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import LoginIcon from '@mui/icons-material/Login';
 import HomeIcon from '@mui/icons-material/Home';
-import StarIcon from '@mui/icons-material/Star';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
+import MapIcon from '@mui/icons-material/Map';
 
-// Heartbeat animation for the flag
-const heartbeat = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(1.05);
-  }
-  40% {
-    transform: scale(1);
-  }
-  60% {
-    transform: scale(1.03);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
-
-const float = keyframes`
+// Subtle floating animation (very gentle, not painful)
+const gentleFloat = keyframes`
   0% {
     transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
   }
   100% {
     transform: translateY(0px);
@@ -52,18 +31,6 @@ const shimmer = keyframes`
   }
   100% {
     background-position: 1000px 0;
-  }
-`;
-
-const rotateGlow = keyframes`
-  0% {
-    box-shadow: 0 0 5px rgba(255,215,0,0.5);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(255,215,0,0.8);
-  }
-  100% {
-    box-shadow: 0 0 5px rgba(255,215,0,0.5);
   }
 `;
 
@@ -109,7 +76,7 @@ const NavButton = styled(Button)(({ theme }) => ({
 const HeroSection = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #002868 0%, #BF0A30 50%, #002868 100%)',
   borderRadius: '30px',
-  padding: theme.spacing(10, 4),
+  padding: theme.spacing(8, 4),
   marginBottom: theme.spacing(4),
   textAlign: 'center',
   position: 'relative',
@@ -129,34 +96,66 @@ const HeroSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const LiberianFlag = styled(Box)(({ theme }) => ({
-  width: '80px',
-  height: '50px',
-  position: 'relative',
-  background: 'linear-gradient(90deg, #BF0A30 0%, #BF0A30 33%, #FFFFFF 33%, #FFFFFF 66%, #002868 66%, #002868 100%)',
-  borderRadius: '8px',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
-  margin: '0 auto',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-  animation: `${heartbeat} 2s ease-in-out infinite`,
-  '&:hover': {
-    transform: 'scale(1.05)',
-    boxShadow: '0 12px 28px rgba(0,0,0,0.3)',
-  },
-  '&::before': {
-    content: '"★"',
-    position: 'absolute',
-    top: '50%',
-    left: '49%',
-    transform: 'translate(-50%, -50%)',
-    color: '#FFFFFF',
-    fontSize: '24px',
-    textShadow: '0 0 5px rgba(0,0,0,0.3)',
-    zIndex: 1,
-    animation: `${rotateGlow} 2s ease-in-out infinite`,
-  },
-}));
+// Liberia Map SVG Component
+const LiberiaMap = () => (
+  <Box
+    sx={{
+      width: '100px',
+      height: '100px',
+      margin: '0 auto',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        transform: 'scale(1.02)',
+      },
+    }}
+  >
+    <svg
+      viewBox="0 0 200 200"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        width: '100%',
+        height: '100%',
+        filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.2))',
+      }}
+    >
+      {/* Map outline of Liberia */}
+      <path
+        d="M100 20 L120 35 L140 30 L155 45 L165 40 L175 55 L180 75 L175 95 L180 115 L170 135 L155 145 L140 155 L120 165 L100 170 L80 165 L60 155 L45 145 L30 135 L25 115 L20 95 L25 75 L30 55 L45 40 L60 30 L80 35 L100 20Z"
+        fill="url(#liberiaGradient)"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        opacity="0.95"
+      />
+      {/* Star in the center */}
+      <polygon
+        points="100,50 108,80 140,80 115,98 125,128 100,110 75,128 85,98 60,80 92,80"
+        fill="#FFD700"
+        opacity="0.9"
+      />
+      {/* Coastal line detail */}
+      <path
+        d="M25 95 Q40 85 55 90 Q70 80 85 88 Q100 78 115 85 Q130 75 145 82 Q160 72 175 80"
+        stroke="#FFFFFF"
+        strokeWidth="1.5"
+        fill="none"
+        opacity="0.6"
+        strokeDasharray="4 4"
+      />
+      <defs>
+        <linearGradient id="liberiaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: '#BF0A30', stopOpacity: 1 }} />
+          <stop offset="50%" style={{ stopColor: '#FFFFFF', stopOpacity: 0.9 }} />
+          <stop offset="100%" style={{ stopColor: '#002868', stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
+    </svg>
+  </Box>
+);
 
 const Footer = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #002868 0%, #001a4d 100%)',
@@ -258,7 +257,7 @@ const PublicLayout = () => {
 
       <HeroSection>
         <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <LiberianFlag />
+          <LiberiaMap />
           
           <Fade in timeout={1000}>
             <Box>
@@ -307,13 +306,13 @@ const PublicLayout = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 4, mb: 4 }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FlagIcon /> About LBR
+                <MapIcon /> About LBR
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.9, lineHeight: 1.8 }}>
                 The Liberia Business Registry (LBR) is the official government platform for business registration, verification, and compliance monitoring.
               </Typography>
               <Box sx={{ mt: 2 }}>
-                <LiberianFlag sx={{ width: 50, height: 30, animation: 'none', '&:hover': { animation: `${heartbeat} 2s ease-in-out infinite` } }} />
+                <LiberiaMap />
               </Box>
             </Box>
             
@@ -349,11 +348,11 @@ const PublicLayout = () => {
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Liberia's Heritage</Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.2)' } }}>🦁</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.2)' } }}>🌴</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.2)' } }}>⚓</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.2)' } }}>🏝️</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.2)' } }}>🌍</Box>
+                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🦁</Box>
+                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🌴</Box>
+                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>⚓</Box>
+                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🏝️</Box>
+                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🌍</Box>
               </Box>
               <Typography variant="body2" sx={{ fontStyle: 'italic', opacity: 0.9 }}>
                 "The Love of Liberty Brought Us Here"
