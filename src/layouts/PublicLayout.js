@@ -11,9 +11,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import SchoolIcon from '@mui/icons-material/School';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import SpeedIcon from '@mui/icons-material/Speed';
+import BusinessIcon from '@mui/icons-material/Business';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ComputerIcon from '@mui/icons-material/Computer';
+import GppGoodIcon from '@mui/icons-material/GppGood';
+import CloudQueueIcon from '@mui/icons-material/CloudQueue';
+import SecurityIcon from '@mui/icons-material/Security';
 
 // Subtle fade in animation only (no blinking)
 const fadeIn = keyframes`
@@ -24,6 +27,25 @@ const fadeIn = keyframes`
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+`;
+
+// Heartbeat animation for stat cards
+const heartbeat = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  ￠ {
+    transform: scale(1.05);
+  }
+  40% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
   }
 `;
 
@@ -78,6 +100,7 @@ const StatCard = styled(Box)(({ theme }) => ({
   textAlign: 'center',
   transition: 'all 0.3s ease',
   border: '1px solid rgba(255,255,255,0.1)',
+  cursor: 'pointer',
   '&:hover': {
     transform: 'translateY(-5px)',
     background: 'rgba(255,255,255,0.1)',
@@ -85,17 +108,30 @@ const StatCard = styled(Box)(({ theme }) => ({
   },
 }));
 
-const FeatureCard = styled(Box)(({ theme }) => ({
-  background: 'white',
-  borderRadius: '20px',
-  padding: theme.spacing(3),
-  textAlign: 'center',
-  transition: 'all 0.3s ease',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-  height: '100%',
+const AnimatedStatNumber = styled(Typography)(({ theme }) => ({
+  fontWeight: 800,
+  color: '#FFD700',
+  fontSize: '2.5rem',
+  display: 'inline-block',
+  animation: `${heartbeat} 2s ease-in-out infinite`,
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
+    animation: `${heartbeat} 1s ease-in-out infinite`,
+  },
+}));
+
+const FeatureIconWrapper = styled(Box)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  borderRadius: '16px',
+  width: '60px',
+  height: '60px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: theme.spacing(2),
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'rotate(10deg) scale(1.1)',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
   },
 }));
 
@@ -163,22 +199,58 @@ const PublicLayout = () => {
           
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 5, flexWrap: 'wrap' }}>
             <StatCard>
-              <Typography variant="h2" sx={{ fontWeight: 800, color: '#FFD700', fontSize: '2.5rem' }}>10K+</Typography>
-              <Typography variant="body2" sx={{ color: 'white', mt: 1 }}>Registered Businesses</Typography>
+              <AnimatedStatNumber>10K+</AnimatedStatNumber>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mt: 1 }}>
+                <BusinessIcon sx={{ fontSize: 18, color: '#FFD700' }} />
+                <Typography variant="body2" sx={{ color: 'white' }}>Registered Businesses</Typography>
+              </Box>
             </StatCard>
             <StatCard>
-              <Typography variant="h2" sx={{ fontWeight: 800, color: '#FFD700', fontSize: '2.5rem' }}>24/7</Typography>
-              <Typography variant="body2" sx={{ color: 'white', mt: 1 }}>Online Access</Typography>
+              <AnimatedStatNumber>24/7</AnimatedStatNumber>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mt: 1 }}>
+                <AccessTimeIcon sx={{ fontSize: 18, color: '#FFD700' }} />
+                <Typography variant="body2" sx={{ color: 'white' }}>Online Access</Typography>
+              </Box>
             </StatCard>
             <StatCard>
-              <Typography variant="h2" sx={{ fontWeight: 800, color: '#FFD700', fontSize: '2.5rem' }}>100%</Typography>
-              <Typography variant="body2" sx={{ color: 'white', mt: 1 }}>Digital Process</Typography>
+              <AnimatedStatNumber>100%</AnimatedStatNumber>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mt: 1 }}>
+                <ComputerIcon sx={{ fontSize: 18, color: '#FFD700' }} />
+                <Typography variant="body2" sx={{ color: 'white' }}>Digital Process</Typography>
+              </Box>
             </StatCard>
           </Box>
         </Box>
       </HeroSection>
 
       <Container maxWidth="lg" sx={{ py: 6 }}>
+        {/* Feature Cards Section */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 3, mb: 6 }}>
+          <Box sx={{ textAlign: 'center', p: 3 }}>
+            <FeatureIconWrapper sx={{ margin: '0 auto', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+              <SearchIcon sx={{ fontSize: 32, color: 'white' }} />
+            </FeatureIconWrapper>
+            <Typography variant="h6" sx={{ fontWeight: 700, mt: 2, mb: 1 }}>Smart Search</Typography>
+            <Typography variant="body2" color="textSecondary">Find any business instantly with our advanced search engine</Typography>
+          </Box>
+          
+          <Box sx={{ textAlign: 'center', p: 3 }}>
+            <FeatureIconWrapper sx={{ margin: '0 auto', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+              <GppGoodIcon sx={{ fontSize: 32, color: 'white' }} />
+            </FeatureIconWrapper>
+            <Typography variant="h6" sx={{ fontWeight: 700, mt: 2, mb: 1 }}>Verify Authenticity</Typography>
+            <Typography variant="body2" color="textSecondary">QR code verification for instant certificate validation</Typography>
+          </Box>
+          
+          <Box sx={{ textAlign: 'center', p: 3 }}>
+            <FeatureIconWrapper sx={{ margin: '0 auto', background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
+              <AppRegistrationIcon sx={{ fontSize: 32, color: 'white' }} />
+            </FeatureIconWrapper>
+            <Typography variant="h6" sx={{ fontWeight: 700, mt: 2, mb: 1 }}>Easy Registration</Typography>
+            <Typography variant="body2" color="textSecondary">Simple 3-step process to register your business online</Typography>
+          </Box>
+        </Box>
+
         <Outlet />
       </Container>
 
