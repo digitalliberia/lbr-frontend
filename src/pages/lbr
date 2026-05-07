@@ -1,0 +1,47 @@
+import React from 'react';
+import { Typography, Box, Button, Grid, Card, CardContent } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+const HomePage = () => {
+  return (
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h3" gutterBottom align="center">
+        Welcome to LBR Business Registry
+      </Typography>
+      <Typography variant="h6" align="center" color="textSecondary" paragraph>
+        Liberia's Official Business Registration and Verification Portal
+      </Typography>
+      <Grid container spacing={3} sx={{ mt: 4 }}>
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5">Search Business</Typography>
+              <Typography>Verify business registration status</Typography>
+              <Button component={Link} to="/search" variant="contained" sx={{ mt: 2 }}>Search Now</Button>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5">Register Business</Typography>
+              <Typography>Start your business registration</Typography>
+              <Button component={Link} to="/register" variant="contained" sx={{ mt: 2 }}>Register Now</Button>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5">Verify Certificate</Typography>
+              <Typography>Verify business certificates</Typography>
+              <Button component={Link} to="/verify" variant="contained" sx={{ mt: 2 }}>Verify Now</Button>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+export default HomePage;
