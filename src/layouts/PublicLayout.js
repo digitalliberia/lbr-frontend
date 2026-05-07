@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Container, Box, IconButton, useTheme, Fade } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
 import RoleSwitcher from '../components/RoleSwitcher';
-import PublicIcon from '@mui/icons-material/Public';
-import FlagIcon from '@mui/icons-material/Flag';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import SearchIcon from '@mui/icons-material/Search';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -13,229 +11,118 @@ import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import MapIcon from '@mui/icons-material/Map';
+import SchoolIcon from '@mui/icons-material/School';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import SpeedIcon from '@mui/icons-material/Speed';
 
-// Subtle floating animation (very gentle, not painful)
-const gentleFloat = keyframes`
-  0% {
-    transform: translateY(0px);
+// Subtle fade in animation only (no blinking)
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  100% {
-    transform: translateY(0px);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 `;
 
-const shimmer = keyframes`
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-`;
-
-// Styled components for modern effects
 const GlassAppBar = styled(AppBar)(({ theme }) => ({
-  background: 'rgba(255, 255, 255, 0.98)',
-  backdropFilter: 'blur(10px)',
-  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.08)',
-  borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+  background: 'rgba(255, 255, 255, 0.95)',
+  backdropFilter: 'blur(20px)',
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
 }));
 
 const NavButton = styled(Button)(({ theme }) => ({
   marginLeft: theme.spacing(1),
-  color: '#002868',
+  color: '#1a1a2e',
   fontWeight: 600,
   textTransform: 'none',
-  fontSize: '1rem',
-  padding: '6px 16px',
+  fontSize: '0.95rem',
+  padding: '8px 20px',
   transition: 'all 0.3s ease',
-  position: 'relative',
-  overflow: 'hidden',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    bottom: 0,
-    left: '50%',
-    width: 0,
-    height: '2px',
-    background: 'linear-gradient(90deg, #BF0A30, #002868)',
-    transition: 'all 0.3s ease',
-    transform: 'translateX(-50%)',
-  },
+  borderRadius: '12px',
   '&:hover': {
-    background: 'linear-gradient(135deg, #002868 0%, #BF0A30 100%)',
+    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
     color: 'white',
     transform: 'translateY(-2px)',
-    '&::before': {
-      width: '80%',
-    },
   },
 }));
 
 const HeroSection = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #002868 0%, #BF0A30 50%, #002868 100%)',
-  borderRadius: '30px',
+  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+  borderRadius: '24px',
   padding: theme.spacing(8, 4),
   marginBottom: theme.spacing(4),
   textAlign: 'center',
   position: 'relative',
   overflow: 'hidden',
   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent)',
-    backgroundSize: '60px 60px',
-    animation: `${shimmer} 3s linear infinite`,
-    pointerEvents: 'none',
-  },
+  animation: `${fadeIn} 0.6s ease-out`,
 }));
 
-// Liberia Map SVG Component
-const LiberiaMap = () => (
-  <Box
-    sx={{
-      width: '100px',
-      height: '100px',
-      margin: '0 auto',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-    }}
-  >
-    <svg
-      viewBox="0 0 200 200"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{
-        width: '100%',
-        height: '100%',
-        filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.2))',
-      }}
-    >
-      {/* Map outline of Liberia */}
-      <path
-        d="M100 20 L120 35 L140 30 L155 45 L165 40 L175 55 L180 75 L175 95 L180 115 L170 135 L155 145 L140 155 L120 165 L100 170 L80 165 L60 155 L45 145 L30 135 L25 115 L20 95 L25 75 L30 55 L45 40 L60 30 L80 35 L100 20Z"
-        fill="url(#liberiaGradient)"
-        stroke="#FFFFFF"
-        strokeWidth="2"
-        opacity="0.95"
-      />
-      {/* Star in the center */}
-      <polygon
-        points="100,50 108,80 140,80 115,98 125,128 100,110 75,128 85,98 60,80 92,80"
-        fill="#FFD700"
-        opacity="0.9"
-      />
-      {/* Coastal line detail */}
-      <path
-        d="M25 95 Q40 85 55 90 Q70 80 85 88 Q100 78 115 85 Q130 75 145 82 Q160 72 175 80"
-        stroke="#FFFFFF"
-        strokeWidth="1.5"
-        fill="none"
-        opacity="0.6"
-        strokeDasharray="4 4"
-      />
-      <defs>
-        <linearGradient id="liberiaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#BF0A30', stopOpacity: 1 }} />
-          <stop offset="50%" style={{ stopColor: '#FFFFFF', stopOpacity: 0.9 }} />
-          <stop offset="100%" style={{ stopColor: '#002868', stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-    </svg>
-  </Box>
-);
-
 const Footer = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #002868 0%, #001a4d 100%)',
+  background: '#1a1a2e',
   color: 'white',
   padding: theme.spacing(6, 0, 3),
   marginTop: 'auto',
-  position: 'relative',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '4px',
-    background: 'linear-gradient(90deg, #BF0A30, #FFFFFF, #BF0A30)',
-  },
+  borderTop: '1px solid rgba(255,255,255,0.1)',
 }));
 
 const StatCard = styled(Box)(({ theme }) => ({
-  background: 'rgba(255,255,255,0.1)',
+  background: 'rgba(255,255,255,0.05)',
   backdropFilter: 'blur(10px)',
-  borderRadius: '15px',
+  borderRadius: '20px',
   padding: theme.spacing(3),
   textAlign: 'center',
   transition: 'all 0.3s ease',
+  border: '1px solid rgba(255,255,255,0.1)',
   '&:hover': {
     transform: 'translateY(-5px)',
-    background: 'rgba(255,255,255,0.2)',
+    background: 'rgba(255,255,255,0.1)',
+    border: '1px solid rgba(255,255,255,0.2)',
+  },
+}));
+
+const FeatureCard = styled(Box)(({ theme }) => ({
+  background: 'white',
+  borderRadius: '20px',
+  padding: theme.spacing(3),
+  textAlign: 'center',
+  transition: 'all 0.3s ease',
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+  height: '100%',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
   },
 }));
 
 const PublicLayout = () => {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const theme = useTheme();
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <>
       <GlassAppBar position="sticky">
-        <Toolbar>
-          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-            <Box sx={{ 
-              width: 40, 
-              height: 25, 
-              background: 'linear-gradient(90deg, #BF0A30 0%, #BF0A30 33%, #FFFFFF 33%, #FFFFFF 66%, #002868 66%, #002868 100%)',
-              borderRadius: '4px',
-              mr: 1.5,
-              position: 'relative',
-              '&::before': {
-                content: '"★"',
-                position: 'absolute',
-                top: '50%',
-                left: '49%',
-                transform: 'translate(-50%, -50%)',
-                color: '#FFFFFF',
-                fontSize: '12px',
-              },
-            }} />
-            <Typography variant="h6" sx={{ 
-              fontWeight: 800, 
-              background: 'linear-gradient(135deg, #002868 0%, #BF0A30 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-              letterSpacing: '-0.5px',
-            }}>
-              Liberia Business Registry
-            </Typography>
-            <Typography variant="caption" sx={{ ml: 1, color: '#666', display: { xs: 'none', sm: 'block' } }}>
-              Republic of Liberia
-            </Typography>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box
+              component="img"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a1a2e'/%3E%3Cpolygon points='50,30 58,45 75,45 62,55 68,70 50,60 32,70 38,55 25,45 42,45' fill='%23FFD700'/%3E%3C/svg%3E"
+              sx={{ width: 40, height: 40, mr: 1.5 }}
+            />
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: '#1a1a2e', letterSpacing: '-0.5px' }}>
+                Liberia Business Registry
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#666', display: { xs: 'none', sm: 'block' } }}>
+                Ministry of Commerce & Industry
+              </Typography>
+            </Box>
           </Box>
           
           <RoleSwitcher />
           
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
             <NavButton component={Link} to="/" startIcon={<HomeIcon />}>
               Home
             </NavButton>
@@ -256,48 +143,42 @@ const PublicLayout = () => {
       </GlassAppBar>
 
       <HeroSection>
-        <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <LiberiaMap />
+        <Box sx={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          <Typography variant="h1" sx={{ 
+            fontWeight: 800, 
+            color: 'white',
+            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            mb: 2,
+            fontSize: { xs: '2rem', sm: '3rem', md: '3.5rem' },
+            letterSpacing: '-1px',
+          }}>
+            Liberia Business Registry
+          </Typography>
+          <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.9)', mb: 3, fontWeight: 500 }}>
+            Empowering Liberian Enterprise • Digital Transformation
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.85)', maxWidth: 600, margin: '0 auto', fontSize: '1.1rem', lineHeight: 1.6 }}>
+            Register, verify, and manage businesses seamlessly with Liberia's official digital business registry platform
+          </Typography>
           
-          <Fade in timeout={1000}>
-            <Box>
-              <Typography variant="h1" sx={{ 
-                fontWeight: 800, 
-                color: 'white',
-                textShadow: '3px 3px 6px rgba(0,0,0,0.3)',
-                mb: 2,
-                fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
-                mt: 3
-              }}>
-                LBR Business Registry
-              </Typography>
-              <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.95)', mb: 2, fontWeight: 500 }}>
-                Republic of Liberia • Ministry of Commerce & Industry
-              </Typography>
-              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.9)', maxWidth: 700, margin: '0 auto', fontSize: '1.1rem' }}>
-                Empowering Liberian enterprises through transparent, efficient, and modern business registration services
-              </Typography>
-              
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 4, flexWrap: 'wrap' }}>
-                <StatCard>
-                  <Typography variant="h3" sx={{ fontWeight: 800, color: '#FFD700' }}>10K+</Typography>
-                  <Typography variant="body2">Registered Businesses</Typography>
-                </StatCard>
-                <StatCard>
-                  <Typography variant="h3" sx={{ fontWeight: 800, color: '#FFD700' }}>24/7</Typography>
-                  <Typography variant="body2">Online Access</Typography>
-                </StatCard>
-                <StatCard>
-                  <Typography variant="h3" sx={{ fontWeight: 800, color: '#FFD700' }}>100%</Typography>
-                  <Typography variant="body2">Digital Process</Typography>
-                </StatCard>
-              </Box>
-            </Box>
-          </Fade>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 5, flexWrap: 'wrap' }}>
+            <StatCard>
+              <Typography variant="h2" sx={{ fontWeight: 800, color: '#FFD700', fontSize: '2.5rem' }}>10K+</Typography>
+              <Typography variant="body2" sx={{ color: 'white', mt: 1 }}>Registered Businesses</Typography>
+            </StatCard>
+            <StatCard>
+              <Typography variant="h2" sx={{ fontWeight: 800, color: '#FFD700', fontSize: '2.5rem' }}>24/7</Typography>
+              <Typography variant="body2" sx={{ color: 'white', mt: 1 }}>Online Access</Typography>
+            </StatCard>
+            <StatCard>
+              <Typography variant="h2" sx={{ fontWeight: 800, color: '#FFD700', fontSize: '2.5rem' }}>100%</Typography>
+              <Typography variant="body2" sx={{ color: 'white', mt: 1 }}>Digital Process</Typography>
+            </StatCard>
+          </Box>
         </Box>
       </HeroSection>
 
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
         <Outlet />
       </Container>
 
@@ -305,23 +186,22 @@ const PublicLayout = () => {
         <Container maxWidth="lg">
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 4, mb: 4 }}>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <MapIcon /> About LBR
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#FFD700' }}>
+                About LBR
               </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.9, lineHeight: 1.8 }}>
-                The Liberia Business Registry (LBR) is the official government platform for business registration, verification, and compliance monitoring.
+              <Typography variant="body2" sx={{ opacity: 0.8, lineHeight: 1.8 }}>
+                The Liberia Business Registry (LBR) is the official government platform for business registration, verification, and compliance monitoring under the Ministry of Commerce & Industry.
               </Typography>
-              <Box sx={{ mt: 2 }}>
-                <LiberiaMap />
-              </Box>
             </Box>
             
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Quick Links</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#FFD700' }}>
+                Quick Links
+              </Typography>
               <Box component="ul" sx={{ listStyle: 'none', p: 0 }}>
                 {['Business Search', 'Register Business', 'Verify Certificate', 'Fee Schedule', 'Download Forms'].map((item) => (
                   <Box component="li" key={item} sx={{ mb: 1 }}>
-                    <Link to="#" style={{ color: 'white', textDecoration: 'none', opacity: 0.9, transition: 'opacity 0.3s', '&:hover': { opacity: 1 } }}>
+                    <Link to="#" style={{ color: 'white', textDecoration: 'none', opacity: 0.8, transition: 'opacity 0.3s', '&:hover': { opacity: 1 } }}>
                       {item}
                     </Link>
                   </Box>
@@ -330,41 +210,38 @@ const PublicLayout = () => {
             </Box>
             
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Contact Information</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#FFD700' }}>
+                Contact
+              </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <LocationOnIcon sx={{ fontSize: 20 }} />
-                <Typography variant="body2">Ministry of Commerce, Monrovia</Typography>
+                <LocationOnIcon sx={{ fontSize: 18, opacity: 0.8 }} />
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>Ministry of Commerce, Monrovia</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <PhoneIcon sx={{ fontSize: 20 }} />
-                <Typography variant="body2">+231 (0) 77 123 4567</Typography>
+                <PhoneIcon sx={{ fontSize: 18, opacity: 0.8 }} />
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>+231 (0) 77 123 4567</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <EmailIcon sx={{ fontSize: 20 }} />
-                <Typography variant="body2">info@lbr.gov.lr</Typography>
+                <EmailIcon sx={{ fontSize: 18, opacity: 0.8 }} />
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>info@lbr.gov.lr</Typography>
               </Box>
             </Box>
             
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Liberia's Heritage</Typography>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🦁</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🌴</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>⚓</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🏝️</Box>
-                <Box component="span" sx={{ fontSize: 30, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.1)' } }}>🌍</Box>
-              </Box>
-              <Typography variant="body2" sx={{ fontStyle: 'italic', opacity: 0.9 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#FFD700' }}>
+                Liberia's Heritage
+              </Typography>
+              <Typography variant="body2" sx={{ fontStyle: 'italic', opacity: 0.9, mb: 1 }}>
                 "The Love of Liberty Brought Us Here"
               </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.7, display: 'block', mt: 1 }}>
-                Established 1847
+              <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>
+                Established 1847 • Republic of Liberia
               </Typography>
             </Box>
           </Box>
           
           <Box sx={{ textAlign: 'center', pt: 3, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+            <Typography variant="body2" sx={{ opacity: 0.7 }}>
               © 2026 Liberia Business Registry. All rights reserved. Empowering Liberian Enterprise
             </Typography>
           </Box>
