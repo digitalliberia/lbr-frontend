@@ -13,8 +13,10 @@ import {
   Chip,
   CircularProgress,
   Alert,
+  Paper
 } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
+import BusinessIcon from '@mui/icons-material/Business';
 import { publicAPI } from '../../services/api';
 
 const SearchPage = () => {
@@ -34,7 +36,7 @@ const SearchPage = () => {
     setResults([]);
 
     try {
-      const type = searchTypes[tabValue].toLowerCase().replace(' ', '_');
+      const type = searchTypes[tabValue].toLowerCase().replace(/ /g, '_');
       const response = await publicAPI.search(searchQuery, type);
       setResults(response.data.data);
     } catch (err) {
@@ -46,13 +48,14 @@ const SearchPage = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'active': return 'success';
-      case 'pending': return 'warning';
-      case 'suspended': return 'error';
-      case 'expired': return 'default';
-      default: return 'info';
-    }
+    const colors = {
+      active: 'success',
+      pending: 'warning',
+      suspended: 'error',
+      expired: 'default',
+      revoked: 'error'
+    };
+    return colors[status] || 'info';
   };
 
   return (
@@ -64,7 +67,7 @@ const SearchPage = () => {
         Search for registered businesses, verify registration status, and check compliance
       </Typography>
 
-      <Card sx={{ mb: 4, p: 3 }}>
+      <Paper elevation={3} sx={{ mb: 4, p: 3 }}>
         <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ mb: 3 }}>
           {searchTypes.map((type, idx) => (
             <Tab key={idx} label={type} />
@@ -79,7 +82,6 @@ const SearchPage = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder={`e.g., ${searchTypes[tabValue] === 'Business Name' ? 'ABC Enterprises' : 'LBR-REG-2026-000001'}`}
             />
           </Grid>
           <Grid item xs={12} md={3}>
@@ -95,7 +97,7 @@ const SearchPage = () => {
             </Button>
           </Grid>
         </Grid>
-      </Card>
+      </Paper>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
@@ -112,9 +114,12 @@ const SearchPage = () => {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={8}>
-                    <Typography variant="h5" gutterBottom>
-                      {business.business_name}
-                    </Typography>
+                    <Box display="flex" alignItems="center" gap={1} mb={1}>
+                      <BusinessIcon color="primary" />
+                      <Typography variant="h5">
+                        {business.business_name}
+                      </Typography>
+                    </Box>
                     <Typography variant="body2" color="textSecondary" gutterBottom>
                       Registration Number: {business.registration_number}
                     </Typography>
