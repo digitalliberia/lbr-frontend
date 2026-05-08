@@ -43,8 +43,8 @@ const SearchPage = () => {
 
   const searchTypes = ['Business Name', 'Registration Number', 'Tax ID (TIN)', 'Owner Name'];
 
-  // LandLock API URL (the mobile app is registered here)
-  const LANDLOCK_API_URL = 'https://api.liblandlock.com';
+  // Get API base URL from environment or use default
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://api.liberiabusinessregistry.com/api';
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -62,23 +62,19 @@ const SearchPage = () => {
     setPaymentMessage('Creating payment request...');
 
     try {
-      // Create payment request through LandLock API (this will trigger mobile notification)
-      const response = await fetch(`${LANDLOCK_API_URL}/api/parcels/create-payment-request`, {
+      // Create payment request through your own backend
+      const response = await fetch(`${API_BASE_URL}/payments/create-search-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           dssn: dssn,
-          upic: `SEARCH-${Date.now()}`, // Create a temporary UPIC for search
           amount: 1.00,
           currency: 'USD',
-          description: `Business Registry Search: ${searchQuery} (${searchTypes[tabValue]})`,
-          callback_data: {
-            type: 'business_search',
-            search_query: searchQuery,
-            search_type: searchTypes[tabValue].toLowerCase().replace(/ /g, '_')
-          }
+          purpose: 'business_search',
+          search_query: searchQuery,
+          search_type: searchTypes[tabValue].toLowerCase().replace(/ /g, '_')
         })
       });
 
@@ -86,7 +82,7 @@ const SearchPage = () => {
 
       if (result.success) {
         setPaymentRequestId(result.data.paymentRequestId);
-        setPaymentMessage('Payment request sent to your mobile device. Please approve on LibPay app...');
+        setPaymentMessage('Payment request sent to your mobile device. Please approve on Digital Liberia app...');
         
         // Start polling for payment status
         startPollingPaymentStatus(result.data.paymentRequestId);
@@ -111,7 +107,7 @@ const SearchPage = () => {
       attempts++;
       
       try {
-        const statusResponse = await fetch(`${LANDLOCK_API_URL}/api/parcels/payment-request-status/${requestId}`);
+        const statusResponse = await fetch(`${API_BASE_URL}/payments/payment-request-status/${requestId}`);
         const statusResult = await statusResponse.json();
         
         if (statusResult.success) {
