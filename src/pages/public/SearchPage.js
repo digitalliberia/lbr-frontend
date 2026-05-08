@@ -43,9 +43,11 @@ const SearchPage = () => {
 
   const searchTypes = ['Business Name', 'Registration Number', 'Tax ID (TIN)', 'Owner Name'];
 
+  // LandLock API URL (the mobile app is registered here)
+  const LANDLOCK_API_URL = 'https://api.liblandlock.com';
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-
     // Open payment modal first
     setPaymentModalOpen(true);
   };
@@ -60,33 +62,37 @@ const SearchPage = () => {
     setPaymentMessage('Creating payment request...');
 
     try {
-      // Create payment request for search (static $1 amount)
-      const paymentResponse = await fetch('https://api.liberiabusinessregistry.com/api/payments/create-search-payment', {
+      // Create payment request through LandLock API (this will trigger mobile notification)
+      const response = await fetch(`${LANDLOCK_API_URL}/api/parcels/create-payment-request`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           dssn: dssn,
+          upic: `SEARCH-${Date.now()}`, // Create a temporary UPIC for search
           amount: 1.00,
           currency: 'USD',
-          purpose: 'business_search',
-          search_query: searchQuery,
-          search_type: searchTypes[tabValue].toLowerCase().replace(/ /g, '_')
+          description: `Business Registry Search: ${searchQuery} (${searchTypes[tabValue]})`,
+          callback_data: {
+            type: 'business_search',
+            search_query: searchQuery,
+            search_type: searchTypes[tabValue].toLowerCase().replace(/ /g, '_')
+          }
         })
       });
 
-      const paymentResult = await paymentResponse.json();
+      const result = await response.json();
 
-      if (paymentResult.success) {
-        setPaymentRequestId(paymentResult.data.paymentRequestId);
+      if (result.success) {
+        setPaymentRequestId(result.data.paymentRequestId);
         setPaymentMessage('Payment request sent to your mobile device. Please approve on LibPay app...');
         
         // Start polling for payment status
-        startPollingPaymentStatus(paymentResult.data.paymentRequestId);
+        startPollingPaymentStatus(result.data.paymentRequestId);
       } else {
         setPaymentStatus('error');
-        setPaymentMessage(paymentResult.message || 'Payment request failed');
+        setPaymentMessage(result.message || 'Payment request failed');
       }
     } catch (err) {
       console.error('Payment error:', err);
@@ -105,7 +111,7 @@ const SearchPage = () => {
       attempts++;
       
       try {
-        const statusResponse = await fetch(`https://api.liberiabusinessregistry.com/api/payments/payment-request-status/${requestId}`);
+        const statusResponse = await fetch(`${LANDLOCK_API_URL}/api/parcels/payment-request-status/${requestId}`);
         const statusResult = await statusResponse.json();
         
         if (statusResult.success) {
@@ -232,7 +238,7 @@ const SearchPage = () => {
           <Box sx={{ mt: 2, textAlign: 'center' }}>
             <Typography variant="caption" color="textSecondary">
               <PaymentIcon sx={{ fontSize: 12, verticalAlign: 'middle', mr: 0.5 }} />
-              Each search costs $1. You will be prompted to pay via LibPay mobile app.
+              Each search costs $1. You will receive a notification on your Digital Liberia mobile app to approve the payment.
             </Typography>
           </Box>
         </Paper>
@@ -327,7 +333,7 @@ const SearchPage = () => {
             Search Fee: $1.00
           </Typography>
           <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mt: 1 }}>
-            Pay via LibPay Mobile App
+            Pay via Digital Liberia Mobile App
           </Typography>
         </DialogTitle>
         
@@ -354,7 +360,7 @@ const SearchPage = () => {
                 }}
               />
               <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block', textAlign: 'center' }}>
-                A payment request will be sent to your LibPay mobile app for approval
+                A payment request will be sent to your Digital Liberia mobile app for approval
               </Typography>
             </>
           )}
